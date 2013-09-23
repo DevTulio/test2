@@ -1,3 +1,2 @@
 db1:
-  name:bus_reservation
   type: mysql
