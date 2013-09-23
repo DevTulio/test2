@@ -2,7 +2,6 @@
 	"require": {
 		"laravel/framework": "4.0.*",
 		"mews/captcha": "dev-master",
-	    "facebook/php-sdk": "dev-master",
 	    "laravelbook/laravel4-powerpack": "dev-master",
 	    "fideloper/proxy": "dev-master"
 
