@@ -8,10 +8,11 @@
 	{{HTML::style('assets/css/flat-ui.css')}}
 	{{HTML::style('assets/datepicker/css/datepicker.css')}}
 	{{HTML::style('assets/css/img.css')}}
+	{{HTML::style('assets/css/mystyle.css')}}
 
 
 </head>
-<body style="background:#BBC1C4;padding-top:27px">
+<body class="background">
 
 	<div class="row-fluid">
 		<div class="navbar navbar-inverse navbar-fixed-top">
@@ -19,7 +20,7 @@
 					
 						
 
-							<div class="container">
+						
 								<div class="span2">
 
 								</div>
@@ -27,19 +28,31 @@
 								<div class="span8">
 									<ul class="nav">
 									<li><a href="{{URL('/')}}">Home</a></li>
-									<li><a href="">Schedules</a></li>
-									<li><a href="{{URL('Reservation')}}">Reservation</a></li>									
-									<li><a href="">Blog</a></li>
-									<li><a href="">About us</a></li>
+									<li><a href="">Gallery</a></li>
+									<li><a href="{{URL::to('history')}}">History</a></li>
+									<li><a href="{{URL::to('route')}}">Routes</a></li>									
+									<li><a href="">Location</a></li>
+									<li><a href="{{URL::to('contactus')}}">Contact us</a></li>
+
 									</ul>
-								</div>
+							
 
 							
-								
-									<ul class="nav"><li>@if(Auth::check())
-										<a  href="#">{{Auth::user()->First_Name}} {{Auth::user()->Last_Name}} </a>
-									@endif</li></ul>
-								
+								@if(Auth::check())
+			     	<ul class="nav">
+
+									<!-- g -->
+					<li >
+                      <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">{{Auth::user()->First_Name}} {{Auth::user()->Last_Name}} <b class="caret"></b></a>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+                        
+                        <li role="presentation" class="divider"></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="{{URL::to('logout')}}">Logout</a></li>
+                      </ul>
+                    </li>
+                    </ul>
+									<!-- m -->
+						        @endif			
 
 							
 							</div>
@@ -54,9 +67,11 @@
 	
 	<div class="row-fluid">
 		<div class="container-fluid">
-			
-			<div class="span3">
+	@if(Auth::check())		
+	<div class="span3">
+
 				<div class="well">
+	
 <div class="accordion" id="accordion2">
   <div class="accordion-group">
     <div class="accordion-heading">
@@ -68,8 +83,8 @@
       <div class="accordion-inner">
      
 			  <ul class="nav nav-pills nav-stacked">
-			  	<li><a href="">My Reserve Seats</a></li>
-			  	<li><a href="">My Cancels</li>
+			  	<li><a href="myreservation">My Reserve Seats</a></li>
+			  	<li><a href="mycancel">My Cancels</li>
 			  </ul>
       
       </div>
@@ -88,10 +103,15 @@
     </div>
   </div>
 </div>
+
 				</div>
+				@endif
 			</div>
 					
-			<div class="span9">
+
+			@if(Request::segment(1)=="Reservation")
+			<div class="{{Auth::check()?'span9': 'span3'}}">
+			{{!Auth::check()?'<br><br><br>':''}}
 				<div class="well">
 
 							@yield('content')
@@ -99,6 +119,17 @@
 				</div>
 			</div>
 
+			@else
+			{{!Auth::check()?'<br><br><br>':''}}
+			<div class="{{Auth::check()?'span9': 'span6'}}">
+
+				<div class="well">
+
+							@yield('content')
+						
+				</div>
+			</div>
+			@endif
 				
 			
 		</div>
@@ -126,6 +157,8 @@
 {{HTML::script('assets/datepicker/js/datepicker.js')}}
 {{HTML::script('assets/datepicker/js/date.js')}}
 {{HTML::script('assets/js/bootstrap.min.js')}}
+{{HTML::script('assets/retina/retina.js')}}
+
 
 </body>
 </html>

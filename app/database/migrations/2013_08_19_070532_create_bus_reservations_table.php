@@ -18,6 +18,8 @@ class CreateBusReservationsTable extends Migration {
 				$table->string('seatno');
 				$table->integer('ticketno');
 				$table->integer('userid');
+				$table->integer('route_id');
+				$table->enum('valid_ticket',array('YES','NO'));
 				$table->enum('status',array('RESERVED','PAID','CANCELLED'));
 				$table->timestamps();
 		});

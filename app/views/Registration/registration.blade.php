@@ -9,7 +9,7 @@
 
 {{Form::open(array('url'=>'Register','class'=>'form-inline','method'=>'POST'))}}
 {{Form::token()}}
-<div class="span4">
+<div class="span5">
 	
 		<div class="control-group {{$errors->has('First_Name') ? 'error':''}}">
 			<label class="control-label">{{$errors->has('First_Name') ? $errors->first('First_Name','<p>:message</p>') : 'First Name'}} </label>
@@ -52,7 +52,7 @@
 
 			<label class="control-label">{{$errors->has('Street_Address') ? $errors->first('Street_Address','<p>:message</p>') : 'Street Address'}} </label>			
 
-			<label class="control-label">{{$errors->has('Street_Address') ? $errors->first('Street_Address','<p>:message</p>') : 'Last Name'}} </label>			
+			
 
 			<input  class="span2" type='text' name="Street_Address" value="{{Input::old('Street_Address')}}" placeholder="Street Address">
 
@@ -68,7 +68,7 @@
 
 </div>
 
-<div class="span4">
+<div class="span6">
 	
 		<div class="control-group {{$errors->has('Last_Name') ? 'error' : ''}}">
 					<label class="control-label">{{$errors->has('Last_Name') ? $errors->first('Last_Name','<p>:message</p>') : 'LastName'}} </label>			

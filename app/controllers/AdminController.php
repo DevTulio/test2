@@ -51,7 +51,8 @@ class AdminController extends BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+		// the specified resource from storage.
+	 
 	}
 
 	/**
@@ -66,8 +67,7 @@ class AdminController extends BaseController {
 	}
 
 	/**
-	 * Remove the specified resource from storage.
-	 *
+	 * Remove
 	 * @param  int  $id
 	 * @return Response
 	 */
@@ -121,4 +121,143 @@ if($validation->passes()){
 		}
 
 
+		public function showPayment(){
+			if(Session::has('admineachdetails')){
+				$users=Session::get('users');
+				$name=DB::table('users')->where('user_id','=',$users)->first();
+				$Fullname=$name->First_Name." ".$name->Last_Name;
+			$Reservations=DB::table('bus_reservations')->where('status','=','RESERVED')->where('user_id','=',$users)->get();
+			return View::make('admin.Payment')->with(array('Reservations'=>$Reservations,'Name'=>$Fullname,'userid'=>$users));
+			}
+			$Reservations=DB::table('bus_reservations')->where('status','=','RESERVED')->get();
+			return View::make('admin.Payment')->with(array('Reservations'=>$Reservations));
+		}
+
+
+		public function showValidTicket(){
+				if(Session::has('searching')){
+				$bus=DB::table('bus_reservations')->where('busid','=',Session::get('busid'))->get();
+
+				return View::make('admin.ValidTickets',array('buses'=>$bus,'search'=>0,'each'=>1));		
+				}
+
+				$bus=Bus::all();
+				return View::make('admin.ValidTickets',array('buses'=>$bus,'search'=>0,'each'=>0));
+		}
+
+
+		public function showUpdateStatus(){
+			$data=Bus::paginate(10);
+			return View::make('admin.updateBusStat',array('data'=>$data));
+		}
+
+
+
+		public function showAddRoute(){
+			$bus=Bus::all();
+			return View::make('admin.addroute',array('bus'=>$bus));
+		}
+
+
+		public function showEditRoute(){
+			$data=BusRoute::all();
+
+			return View::make('admin.editRoute',array('data'=>$data));
+		}
+
+		public function postupdateEditRoute(){
+			$departure_date=Input::get('departure_date');
+			$departure_time=Input::get('departure_time');
+			$leaving_from=Input::get('leaving_from');
+			$going_to=Input::get('going_to');
+			$amount=Input::get('amount');
+			$route_id=Input::get('routeid');
+
+			DB::table('bus_routes')->where('route_id',$route_id)->update(array('departure_date'=>$departure_date,
+				'departure_time'=>$departure_time,
+				'leaving_from'=>$leaving_from,
+				'going_to'=>$going_to,
+				'amount'=>$amount
+				));
+
+			return Redirect::back()->with(array('message'=>'Successfully Update The Routes'));
+
+		}
+		public function postEditRoute(){
+			$data=DB::table('bus_routes')->where('route_id','=',Input::get('EditRoute'))->first();
+
+			return Redirect::back()->with(array('editRoute'=>true,'data'=>$data));
+			
+		}
+		public function postBusTicket(){
+			return Redirect::back()->with(array('searching'=>1,'busid'=>Input::get('busid')));
+		}
+
+		public function postAddRoute(){
+			$rules=array('departure_time'=>'required',
+						 'departure_date'=>'required',
+						 'amount'=>'required|integer',
+						 'leaving_from'=>'required',
+						 'going_to'=>'required',
+						 'busid'=>'required'
+						 );
+			$validation=Validator::make(Input::all(),$rules);
+			if($validation->passes()){
+				$route=new BusRoute;
+				$route->busid=Input::get('busid');
+				$route->departure_date=Input::get('departure_date');
+				$route->departure_time=Input::get('departure_time');
+				$route->leaving_from=Input::get('leaving_from');
+				$route->going_to=Input::get('going_to');
+				$route->amount=Input::get('amount');
+				$route->save();
+
+				return Redirect::back()->with(array('SuccessMsg'=>'SuccessFully Added Route'));
+			}
+			    return Redirect::back()->with(array('ErrorMsg'=>'Error Occured. Please Check the fields'))
+
+			    ->withErrors($validation);
+		}
+		public function postViewDetails(){
+			return Redirect::to('admin/Reservationpayment')->with(array('admineachdetails'=>1,'users'=>Input::get('reserve')));
+		}
+		public function postPaid(){
+			$discountPercent=0.12;
+			$user=Input::get('userid');
+			$discount=Input::get('discounted');
+			$pay=Input::get('pay');
+			if(count($pay)==0){
+				return Redirect::back()->with(array("AdminErrorMessage"=>"Nothing To save"));
+							}
+
+					foreach ($pay as $payment) {
+							$seat=explode('-',$payment);
+							$seatno=DB::table('seats')->where('seatno','=',$seat[0]."-".$seat[1])->first();
+							$bus_reserv=DB::table('bus_reservations')->where('seatno','=',$seat[0]."-".$seat[1])->where('status','=','RESERVED')->first();
+							DB::table('bus_reservations')->where('bus_resvid',$bus_reserv->bus_resvid)->update(array('status'=>'PAID','ticketno'=>$seatno->ticketno));
+						if(count($discount)!=0 && in_array($payment, $discount)){
+								//update the busresrve tb with PAID and ticket num 
+							//upadate ticket with price and dicount
+							$tickets=DB::table('tickets')
+							->where('ticketno',$seatno->ticketno)
+							->update(array('route_id'=>$bus_reserv->route_id,
+								'amount'=>$seat[2]-($seat[2]*$discountPercent),
+								'date'=>date('Y-m-d H:i:s'),
+								'discount'=>$seat[2]*$discountPercent));
+							
+
+						}
+						else{
+								//update the busresrve tb with PAID and ticket num 
+							//upadate ticket with price
+							$tickets=DB::table('tickets')
+							->where('ticketno',$seatno->ticketno)
+							->update(array('route_id'=>$bus_reserv->route_id,
+								'amount'=>$seat[2],
+								'date'=>date('Y-m-d H:i:s'),
+								'discount'=>0));
+						}
+					}
+			return Redirect::back()->with(array("AdminSuccess"=>"User Successfully Paid"));
+		}
 }

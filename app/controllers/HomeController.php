@@ -29,7 +29,8 @@ class HomeController extends BaseController {
 					'Password'=>Hash::make(Input::get('Password')),
 					'Phone_Number'=>Input::get('Phone_Number'),
 					'Mailing_Address'=>strtoupper(Input::get('Mailing_Address')),
-					'Street_Address'=>strtoupper(Input::get('Street_Address'))
+					'Street_Address'=>strtoupper(Input::get('Street_Address')),
+					'Account_type'=>'E'
 					));
 
 					$data=array('url'=>'generate');
@@ -69,18 +70,35 @@ public function login()
 			return Redirect::intended('Reservation');
 		}	
 
-			return Redirect::back()->withInput()->wth(array('AccountNotFound','Account Not Found'));
+			return Redirect::back()->withInput()->with(array('AccountNotFound','Account Not Found'));
 	
 }
 
 public function logout()
-
-
 {
+	Auth::logout();
+			 return Redirect::to('Reservation');
+
 
 	
 }
 
+public function history(){
+return View::make('home.history');
+}
 
+public function gallery(){
+	
+}
+public function contacus(){
+	return View::make('home.contact');
+}
+public function location(){
+	return View::make('home.contact');
+}
+public function routes(){
+	$route=BusRoute::all();
+	return View::make('home.route',array('route'=>$route));
+}
 
 }

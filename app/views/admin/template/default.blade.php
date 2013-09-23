@@ -24,13 +24,14 @@
 
 								<div class="span8">
 									<ul class="nav">
-									
+								<li>	<a class="brand" href="" >ADMIN</a></li>
+								<li>	<a href="{{URL::to('admin/logout')}}" >Logout</a></li>
 									</ul>
 								</div>
 
 								<div class="span2">
-
-
+										
+									
 								</div>
 							</div>
 
@@ -46,8 +47,64 @@
 		<div class="container-fluid">
 			
 		
-					@yield('content')						
+				<div class="span3">
+<div class="accordion" id="accordion2">
+  <div class="accordion-group">
+	    <div class="accordion-heading">
+	      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+	        Bus
+	      </a>
+	    </div>
+	    <div id="collapseOne" class="accordion-body collapse in">
+	      <div class="accordion-inner">
+	     
+				  <ul class="nav nav-pills nav-stacked">
+				  	<li><a href="{{URL::to('admin/addbus')}}">Add Bus</a></li>
+				  	<li><a href="">Edit Bus</a></li>
+				   	<li><a href="{{URL::to('admin/BusStat')}}">Update Bus Status</a></li>
+				  </ul>
+	      
+	      </div>
+	    </div>
+  </div>
+  <div class="accordion-group">
+	    <div class="accordion-heading">
+	      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+	       Route
+	      </a>
+	    </div>
+	    <div id="collapseTwo" class="accordion-body collapse">
+	      <div class="accordion-inner">
+	        <ul class="nav nava-pills nav stacked">
+	        	<li><a href="{{URL::to('admin/addRoute')}}">Add Route</a></li>
+	        	<li><a href="{{URL::to('admin/editRoute')}}">Edit Route</a></li>
+	        </ul>
+	      </div>
+	    </div>
+  </div>
 
+	</div>
+
+  <div class="accordion-group">
+	    <div class="accordion-heading">
+	      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+	        Reservation
+	      </a>
+	    </div>
+	    <div id="collapseThree" class="accordion-body collapse">
+	      <div class="accordion-inner">
+	        <ul class="nav nava-pills nav stacked">
+	        	<li><a href="{{URL::to('admin/Reservationpayment')}}">Payment</a></li>
+	        	<li><a href="{{URL::to('admin/ValidTicket')}}">Search Valid Ticket</a></li>
+	        </ul>
+	      </div>
+	    </div>
+  </div>
+</div>
+
+				<div class="span8">
+						@yield('content')					
+				</div>
 						
 			
 		</div>

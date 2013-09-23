@@ -10,6 +10,15 @@ class BaseController extends Controller {
 
 	function __construct(){
 		/*
+			
+			Closed thebus reservation
+	
+		*/
+			$getBus=DB::table('buses')->where('availableseats','=',0)->get();
+			foreach ($getBus as $eachget) {
+				DB::table('buses')->where('busid',$eachget->busid)->update(array('status'=>'CLOSED'));
+			}
+		/*
 		|Update the Expiration of Bus Reservation
 		|
 		|Update the if the Bus Already reach the destination and Going back so the 
@@ -28,7 +37,7 @@ class BaseController extends Controller {
 		foreach ($busReserve as $busesDate) {
 			$date=date_diff($currentDate,date_create($busesDate->created_at));
 			
-			if($date->format('%d')>1){
+			if($date->format('%H')>3){
 				DB::table('bus_reservations')->where('busid',$busesDate->busid)			
 				->update(array('status'=>'CANCEL','created_at'=>$busesDate->created_at));
 
@@ -54,7 +63,8 @@ class BaseController extends Controller {
 		->where('status','=','ONBOARD')
 		->get();
 		
-		foreach ($Buses as $Bus) {			
+		foreach ($Buses as $Bus) {	
+				DB::table('bus_reservations')->where('busid',$Bus->busid)->where('status','PAID')->update(array('valid_ticket'=>'NO'));		
 				for ($i=1; $i <=$Bus->capacity ; $i++) {
 					DB::table('tickets')->insert(array('busid'=> $Bus->busid,'created_at'=>date('created_at')));
 					$ticketno=DB::table('tickets')->orderBy('ticketno','desc')->first();
@@ -62,7 +72,7 @@ class BaseController extends Controller {
 				}
 					;
 				// $date=date('Y-m-d H:i:s',strtotime($Bus->created_at.'+ 7 days'));
-					$date=date('Y-m-d',strtotime(date('Y-m-d').'+ 7 days'));
+					$date=date('Y-m-d',strtotime(date('Y-m-d').'+ 1 days'));
 									
 
 				DB::table('buses')->where('busid',$Bus->busid)->update(array('status'=>'WAITING','availableseats'=>0,'created_at'=>$Bus->created_at));

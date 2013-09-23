@@ -29,10 +29,11 @@
 								<div class="span8">
 									<ul class="nav">
 									<li><a href="{{URL('/')}}">Home</a></li>
-									<li><a href="">Schedules</a></li>
-									<li><a href="{{URL('Reservation')}}">Reservation</a></li>									
-									<li><a href="">Blog</a></li>
-									<li><a href="">About us</a></li>
+									<li><a href="">Gallery</a></li>
+									<li><a href="{{URL::to('history')}}">History</a></li>
+									<li><a href="{{URL('Reservation')}}">Routes</a></li>									
+									<li><a href="">Location</a></li>
+									<li><a href="">Contact us</a></li>
 									</ul>
 								</div>
 

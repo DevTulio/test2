@@ -2,6 +2,7 @@
 
 class ReservationController extends BaseController {
 
+		
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -80,6 +81,9 @@ class ReservationController extends BaseController {
 	}
 
 	public function showReservation(){
+		// if(!Auth::check()){
+		// 	 return View::make('home.home');
+		// }
 	$data=BusRoute::all();	
 
 
@@ -113,7 +117,7 @@ class ReservationController extends BaseController {
 				
 
 
-	    return View::make('Reservation.reservation',array('Routes'=>$data,'Search'=>true,'results'=>$id,'isFound'=>$isFound));
+	    return View::make('Reservation.reservation',array('Routes'=>$data,'Search'=>true,'results'=>$id,'isFound'=>$isFound,'field'=>$dat));
 	}
 		
 		return View::make('Reservation.reservation',array('Routes'=>$data,'Search'=>false));
@@ -138,27 +142,59 @@ class ReservationController extends BaseController {
 	}
 
 		public function postReserve(){
+
 			$reserveSeats=Input::get('seats');			
 			$busid=Input::get('busid');
+			$LeavingFrom=Input::get('LeavingFrom');
+			$GoingTo=Input::get('GoingTo');
+			$routeid=DB::table('bus_routes')->where('leaving_from','=',$LeavingFrom)->where('going_to','=',$GoingTo)->first();
 
+			$seatCapacity2=DB::table('buses')->where('busid','=',$busid)->first();
+
+			if(count($reserveSeats)>$seatCapacity2->availableseats){
+					return Redirect::back()->with(array('ReserveError'=>'Cannot Reserve. The Reserve seats Reach the more than Available seats'));
+			}
+			if(count($reserveSeats)==0){
+					return Redirect::back()->with(array('ReserveError'=>'Cannot Reserve. Nothing to Reserve'));
+			}
 			foreach ($reserveSeats as $seat) {
 				$BusReserve= new BusReservations;
 				$BusReserve->busid=$busid;
 				$BusReserve->seatno=$seat;
 				$BusReserve->user_id=Auth::user()->user_id;
 				$BusReserve->status="RESERVED";
+				$BusReserve->route_id=$routeid->route_id;
 				$BusReserve->save();
-			}
 
-			$seatCapacity=DB::table('buses')->where('busid','=',$busid)->first();
+				$seatCapacity=DB::table('buses')->where('busid','=',$busid)->first();
+
 				if($seatCapacity->availableseats==0){
 					DB::table('buses')->where('busid',$busid)->update(array('status'=>'CLOSED'));
 				}
 				elseif($seatCapacity->availableseats>0){
 					DB::table('buses')->where('busid',$busid)->update(array('availableseats'=>$seatCapacity->availableseats-1));
 				}
+			}
+
+			
 				return Redirect::back()->with(array('message'=>"Successfuly Reserve"));
 			
+		}
+		public function postCancelReservation(){
+			$input=Input::get('seatno');
+
+			$currentDate=date_create(date('Y-m-d H:i:s'));
+			$busid=explode("-",$input);
+			DB::table('cancels')->insert(array('busid'=>$busid[0],
+					'time'=>$currentDate,
+					'seatno'=>$input,
+					'user_id'=>Auth::user()->user_id,					
+					'reason'=>'CANCEL'
+					));
+			$capacity=DB::table('buses')->where('busid','=',$busid[0])->first();
+			DB::table('bus_reservations')->where('user_id',Auth::user()->user_id)->where('seatno',$input)->update(array('status'=>'CANCEL'));
+			DB::table('buses')->where('busid',$busid[0])->update(array('availableseats'=>$capacity->capacity+1));
+				return Redirect::back()->with(array('cancel_message'=>"The Reservation Has Been Cancelled"));
 		}
 
 }

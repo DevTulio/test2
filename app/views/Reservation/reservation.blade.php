@@ -2,7 +2,6 @@
 
 @section('content')
 
-
 <div class="row-fluid">
 
 @if(Session::has('Search'))
@@ -14,6 +13,7 @@
 			</div>
 		@endif
 @endif
+
 	<div class="span12">
 
 
@@ -21,6 +21,20 @@
 				@if(Auth::check())
 					 	{{Form::open(array('url'=>URL::to('Routes/search'),'class'=>'form-inline','method'=>'POST'))}}
 					 		{{Form::token()}}
+					 		@if(Session::has('ReserveError'))
+					 			<div class="alert alert-error">
+					 					<button type="button" class="close" data-dismiss="alert" >&times;</button>
+					 					{{Session::get('ReserveError')}}
+
+					 			</div>
+					 		@endif
+					 		@if(Session::has('message'))
+					 			<div class="alert alert-success">
+					 					<button type="button" class="close" data-dismiss="alert" >&times;</button>
+					 					{{Session::get('message')}}
+
+					 			</div>
+					 		@endif
 						<div class="control-label">							
 								<b>Search Departure Date</b>
 						</div>
@@ -79,7 +93,7 @@
 
 				              	
 				             		@foreach($results as $result)
-				             	{{--*/$seatCount=1/*--}}
+				             	{{--*/$seatCount=0/*--}}
 
 
 				                <tr>
@@ -96,6 +110,10 @@
 				                <div id="myModal{{$result->busid}}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
 					            {{Form::open(array('url'=>URL::to('Routes/Reserve'),'class'=>'form-inline','method'=>'POST'))}}
 		                  	    {{Form::token()}}
+		                  	    <input type="hidden" value="{{$field['LeavingFrom']}}" name="LeavingFrom">
+		                  	    <input type="hidden" value="{{$field['searchGoingTo']}}" name="GoingTo">
+
+
 					            <div class="modal-header">
 					              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					              <h3 id="myModalLabel">Bus Reservation</h3>
@@ -107,11 +125,12 @@
 		                  				 <input type="hidden" name="busid" value="{{$result->busid}}">
 
 		                  		 @foreach(DB::table('seats')->where('busid','=',$result->busid)->get() as $each)
-		                   			
-										@if(count(DB::table('bus_reservations')->where('seatno','=',$each->seatno)->get())<=0)
+		                   				{{--*/$seatCount++/*--}}
+										@if(count(DB::table('bus_reservations')->where('seatno','=',$each->seatno)->where('status','!=','CANCEL')->get())<=0)
 
 					       			 <input type="checkbox"  style="padding:10px" name="seats[]" value="{{$each->seatno}}">&nbsp;<img class="available"></img>
-
+					       			  @elseif(count(DB::table('bus_reservations')->where('seatno','=',$each->seatno)->where('status','!=','CANCEL')->get())>0)
+					       			  <input type="checkbox"  style="padding:10px" name="seats[]" value="{{$each->seatno}}">&nbsp;<img class="available"></img>
 					              	  @else
 					              	 		@foreach(DB::table('bus_reservations')->where('seatno','=',$each->seatno)->get() as $each2)
 					                    @if($each2->status=='RESERVED'||$each2->status=='PAID')
@@ -126,7 +145,7 @@
 					              	 				<br><br>
 					              	 			@endif
 					              	 @endif
-					                	{{--*/$seatCount++/*--}}
+					                
 					              	 
 					              @endforeach
 					              <div class="row-fluid">
@@ -172,7 +191,7 @@
 						</div>	
 
 					@endif
-						<div class="span5">
+						<div class="{{Auth::check()? 'span5':'span12'}}">
 								@if($errors->has('Email'))
 								<div class="alert alert-error">
 									<button type="button" class="close" data-dismiss="alert">&times;</button>

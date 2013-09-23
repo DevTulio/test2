@@ -20,7 +20,7 @@
 			        @if(Session::has('Accnot_found'))
 					<div class="alert alert-error">
 					<button class="close" type="button" data-dismiss="alert" >&times;</button>
-					<strong>ACCONT NOT FOUND</strong>
+					<strong>ACCOUNT NOT FOUND</strong>
 					</div>
 					@endif
 

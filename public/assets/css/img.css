@@ -38,3 +38,36 @@ img.booked{
 	
 }
 
+
+
+img.booked{
+	list-style:none;
+	width:25px;
+	margin:-1px 4px 0 0;
+	height: 25px;
+	background:url('../images/coomon_sprite.png') 0px -46px no-repeat;
+	
+}
+
+
+
+img.bookedseats{
+	list-style:none;
+	width:25px;
+	margin:-1px 4px 0 0;
+	height: 25px;
+	background:url('../images/coomon_sprite.png') -25px -23px no-repeat;
+	
+}
+
+img.cancelseats{
+	list-style:none;
+	width:25px;
+	margin:-1px 4px 0 0;
+	height: 25px;
+	background:url('../images/coomon_sprite.png') -25px -46px no-repeat;
+	
+}
+
+
+
