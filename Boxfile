@@ -22,5 +22,5 @@ web1:
     - "rm -f app/storage/cache/*"
     - "php artisan cache:clear"
     - "rm -f app/storage/views/*"
-    cache1:
-    type: redis
+cache1:
+  type: redis
