@@ -22,5 +22,7 @@ web1:
     - "rm -f app/storage/cache/*"
     - "php artisan cache:clear"
     - "rm -f app/storage/views/*"
+    before_deploy:
+    - "php artisan migrate"
 cache1:
   type: redis
