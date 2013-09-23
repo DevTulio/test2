@@ -1,3 +1,5 @@
 db1:
   name:bus_reservation
+  user:root
+  pass:pass
   type: mysql
