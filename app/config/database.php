@@ -54,10 +54,10 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'host'      => 'localhost',
+			'host'      => 'tunnel.pagodabox.com',
 			'database'  => 'bus_reservation',
 			'username'  => 'root',
-			'password'  => '',
+			'password'  => 'pass',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',
