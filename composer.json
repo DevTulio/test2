@@ -4,7 +4,8 @@
 		"twitter/bootstrap": "dev-3.0.0-wip",
 		"mews/captcha": "dev-master",
 	    "facebook/php-sdk": "dev-master",
-	    "laravelbook/laravel4-powerpack": "dev-master"
+	    "laravelbook/laravel4-powerpack": "dev-master",
+	    "fideloper/proxy": "dev-master"
 
 	},
 	"autoload": {
